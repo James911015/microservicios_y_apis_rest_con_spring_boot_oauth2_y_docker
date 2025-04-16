@@ -21,9 +21,9 @@ allprojects {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    //implementation 'org.springframework.boot:spring-boot-starter-web'
+    //developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    //testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     implementation 'org.apache.groovy:groovy:4.0.14'

@@ -2,7 +2,6 @@ package com.paymentchain.customer.controllers;
 
 import com.paymentchain.customer.entities.Customer;
 import com.paymentchain.customer.repositories.CustomerRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,0 +1,4 @@
+rootProject.name = 'paymentchainparent'
+include 'domain'
+include 'infrastructure'
+

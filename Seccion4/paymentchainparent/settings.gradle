@@ -1,5 +1,6 @@
 rootProject.name = 'paymentchainparent'
 include 'domain'
 include 'domain:customer'
+include 'domain:product'
 include 'infrastructure'
 

@@ -2,6 +2,7 @@ package com.paymentchain.customer.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.paymentchain.customer.entities.Customer;
+import com.paymentchain.customer.entities.CustomerProduct;
 import com.paymentchain.customer.repositories.CustomerRepository;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.epoll.EpollChannelOption;
@@ -84,6 +85,17 @@ public class CustomerController {
     public ResponseEntity<Customer> deleteCustomer(@PathVariable Long id) {
         repository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/full")
+    public Customer getByCode(@RequestParam String code) {
+        Customer customer = repository.getByCode(code);
+        List<CustomerProduct> products = customer.getProducts();
+        products.forEach(x -> {
+            String productName = getProductName(x.getProductId());
+            x.setProductName(productName);
+        });
+        return customer;
     }
 
     private String getProductName(Long productId) {

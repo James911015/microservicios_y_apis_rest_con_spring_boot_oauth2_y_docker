@@ -1,5 +1,6 @@
 package com.paymentchain.customer.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.paymentchain.customer.entities.Customer;
 import com.paymentchain.customer.repositories.CustomerRepository;
 import io.netty.channel.ChannelOption;
@@ -7,13 +8,14 @@ import io.netty.channel.epoll.EpollChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +27,7 @@ public class CustomerController {
     @Autowired
     CustomerRepository repository;
 
-    private final WebClient.Builder clientBuilder;
+    private final WebClient.Builder webClient;
 
     HttpClient client = HttpClient.create()
             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
@@ -39,7 +41,7 @@ public class CustomerController {
             });
 
     public CustomerController(WebClient.Builder clientBuilder) {
-        this.clientBuilder = clientBuilder;
+        this.webClient = clientBuilder;
     }
 
 
@@ -82,6 +84,19 @@ public class CustomerController {
     public ResponseEntity<Customer> deleteCustomer(@PathVariable Long id) {
         repository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private String getProductName(Long productId) {
+        WebClient build = webClient.clientConnector(new ReactorClientHttpConnector(client))
+                .baseUrl("http://localhost:8082/product")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8082/product"))
+                .build();
+        JsonNode block = build.method(HttpMethod.GET).uri("/", productId)
+                .retrieve().bodyToMono(JsonNode.class).block();
+        System.out.println(block.toString());
+        String productName = block.get("name").asText();
+        return productName;
     }
 
 

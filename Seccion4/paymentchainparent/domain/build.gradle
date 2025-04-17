@@ -27,6 +27,8 @@ dependencies {
     implementation("com.h2database:h2:2.2.224")
     runtimeOnly 'com.h2database:h2'
 
+    implementation 'org.springframework.boot:spring-boot-starter-webflux:3.4.4'
+
     //implementation("org.postgresql:postgresql:42.7.5")
 
     implementation 'org.apache.groovy:groovy:4.0.14'

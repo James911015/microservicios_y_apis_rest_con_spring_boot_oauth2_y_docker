@@ -46,9 +46,8 @@ public class CustomerController {
 
     @PostMapping()
     public ResponseEntity<Customer> saveCustomer(@RequestBody Customer body) {
-        Customer save = new Customer();
-        save = body;
-        Customer saved = repository.save(save);
+        body.getProducts().forEach(x -> x.setCustomer(body));
+        Customer saved = repository.save(body);
         return ResponseEntity.ok(saved);
     }
 

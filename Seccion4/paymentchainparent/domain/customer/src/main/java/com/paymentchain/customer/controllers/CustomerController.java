@@ -77,7 +77,6 @@ public class CustomerController {
     @PostMapping()
     public ResponseEntity<Customer> saveCustomer(@RequestBody Customer body) {
         body.getProducts().forEach(x -> x.setCustomer(body));
-        body.getTransations().forEach(x -> x.setCustomer(body));
         Customer saved = repository.save(body);
         return ResponseEntity.ok(saved);
     }
@@ -103,11 +102,8 @@ public class CustomerController {
     @GetMapping("/full2")
     public Customer getByIban(@RequestParam String iban) {
         Customer customer = repository.getByIban(iban);
-        List<CustomerTransaction> transactions = customer.getTransations();
-        transactions.forEach(x -> {
-            String productName = getProductName(x.getTransactionId());
-            x.setReference(productName);
-        });
+        List<?> transactions = getTransactionReference(customer.getIban());
+        customer.setTransations(transactions);
         return customer;
     }
 
@@ -124,16 +120,16 @@ public class CustomerController {
         return productName;
     }
 
-    private String getTransactionReference(Long transactionId) {
+    private List<?> getTransactionReference(String ibann) {
         WebClient build = webClient.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8082/transaction")
+                .baseUrl("http://localhost:8083/transaction/iban")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8082/transaction"))
                 .build();
-        JsonNode block = build.method(HttpMethod.GET).uri("/" + transactionId)
-                .retrieve().bodyToMono(JsonNode.class).block();
-        System.out.println(block.toString());
-        String transactionReference = block.get("reference").asText();
-        return transactionReference;
+
+        return build.method(HttpMethod.GET).uri(uriBuilder -> uriBuilder
+                        .path("/iban")
+                        .queryParam("ibann", ibann)
+                        .build())
+                .retrieve().bodyToFlux(Object.class).collectList().block();
     }
 }

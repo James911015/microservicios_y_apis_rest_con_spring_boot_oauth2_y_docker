@@ -104,7 +104,7 @@ public class CustomerController {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8082/product"))
                 .build();
-        JsonNode block = build.method(HttpMethod.GET).uri("/", productId)
+        JsonNode block = build.method(HttpMethod.GET).uri("/" + productId)
                 .retrieve().bodyToMono(JsonNode.class).block();
         System.out.println(block.toString());
         String productName = block.get("name").asText();

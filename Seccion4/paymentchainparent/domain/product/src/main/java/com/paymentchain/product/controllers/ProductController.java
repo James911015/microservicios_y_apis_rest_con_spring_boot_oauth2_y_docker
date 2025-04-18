@@ -22,9 +22,9 @@ public class ProductController {
         return repository.findAll();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable Long id) {
-        Optional<Product> product = repository.findById(id);
+    @GetMapping("/{productId}")
+    public ResponseEntity<?> getProductById(@PathVariable Long productId) {
+        Optional<Product> product = repository.findById(productId);
         if (product.isPresent()) {
             return new ResponseEntity<>(product.get(), HttpStatus.OK);
         }

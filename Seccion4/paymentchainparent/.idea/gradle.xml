@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/domain" />
             <option value="$PROJECT_DIR$/domain/customer" />
             <option value="$PROJECT_DIR$/domain/product" />
+            <option value="$PROJECT_DIR$/domain/transaction" />
             <option value="$PROJECT_DIR$/infrastructure" />
           </set>
         </option>

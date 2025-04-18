@@ -110,6 +110,4 @@ public class CustomerController {
         String productName = block.get("name").asText();
         return productName;
     }
-
-
 }

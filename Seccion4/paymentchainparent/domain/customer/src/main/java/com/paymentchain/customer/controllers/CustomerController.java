@@ -3,6 +3,7 @@ package com.paymentchain.customer.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.paymentchain.customer.entities.Customer;
 import com.paymentchain.customer.entities.CustomerProduct;
+import com.paymentchain.customer.entities.CustomerTransaction;
 import com.paymentchain.customer.repositories.CustomerRepository;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.epoll.EpollChannelOption;
@@ -76,6 +77,7 @@ public class CustomerController {
     @PostMapping()
     public ResponseEntity<Customer> saveCustomer(@RequestBody Customer body) {
         body.getProducts().forEach(x -> x.setCustomer(body));
+        body.getTransations().forEach(x -> x.setCustomer(body));
         Customer saved = repository.save(body);
         return ResponseEntity.ok(saved);
     }
@@ -98,6 +100,17 @@ public class CustomerController {
         return customer;
     }
 
+    @GetMapping("/full2")
+    public Customer getByIban(@RequestParam String iban) {
+        Customer customer = repository.getByIban(iban);
+        List<CustomerTransaction> transactions = customer.getTransations();
+        transactions.forEach(x -> {
+            String productName = getProductName(x.getTransactionId());
+            x.setReference(productName);
+        });
+        return customer;
+    }
+
     private String getProductName(Long productId) {
         WebClient build = webClient.clientConnector(new ReactorClientHttpConnector(client))
                 .baseUrl("http://localhost:8082/product")
@@ -109,5 +122,18 @@ public class CustomerController {
         System.out.println(block.toString());
         String productName = block.get("name").asText();
         return productName;
+    }
+
+    private String getTransactionReference(Long transactionId) {
+        WebClient build = webClient.clientConnector(new ReactorClientHttpConnector(client))
+                .baseUrl("http://localhost:8082/transaction")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8082/transaction"))
+                .build();
+        JsonNode block = build.method(HttpMethod.GET).uri("/" + transactionId)
+                .retrieve().bodyToMono(JsonNode.class).block();
+        System.out.println(block.toString());
+        String transactionReference = block.get("reference").asText();
+        return transactionReference;
     }
 }

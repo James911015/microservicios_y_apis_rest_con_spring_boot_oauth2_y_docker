@@ -4,4 +4,5 @@ include 'domain:customer'
 include 'domain:product'
 include 'domain:transaction'
 include 'infrastructure'
+include 'infrastructure:configserver'
 

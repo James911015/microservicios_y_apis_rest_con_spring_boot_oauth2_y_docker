@@ -10,6 +10,7 @@ import io.netty.channel.epoll.EpollChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,9 @@ public class CustomerController {
     @Autowired
     CustomerRepository repository;
 
+    @Autowired
+    private Environment env;
+
     private final WebClient.Builder webClient;
 
     HttpClient client = HttpClient.create()
@@ -46,6 +50,11 @@ public class CustomerController {
         this.webClient = clientBuilder;
     }
 
+
+    @GetMapping("/check")
+    public String check() {
+        return "Hello your property value is "+env.getProperty("custom.activeprofileName");
+    }
 
     @GetMapping()
     public List<Customer> getAllCustomers() {

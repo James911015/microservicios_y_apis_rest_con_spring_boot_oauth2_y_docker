@@ -1,0 +1,2 @@
+Ejecutar en la raiz de los microservicios
+./gradlew bootRun --args='--spring.profiles.active=dev'

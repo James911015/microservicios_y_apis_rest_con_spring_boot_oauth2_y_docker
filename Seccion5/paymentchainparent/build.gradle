@@ -20,15 +20,27 @@ allprojects {
     }
 }
 
+ext {
+    set('springCloudVersion', "2024.0.1")
+}
+
 dependencies {
     //implementation 'org.springframework.boot:spring-boot-starter-web'
     //developmentOnly 'org.springframework.boot:spring-boot-devtools'
     //testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    //implementation 'org.springframework.boot:spring-boot-starter-actuator'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     implementation 'org.apache.groovy:groovy:4.0.14'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
 test {
